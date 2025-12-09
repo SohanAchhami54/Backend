@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-
 const Jokes = () => {
  const {data,isLoading,error} = useQuery({
     queryKey: ['jokes'],
