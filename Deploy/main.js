@@ -10,8 +10,18 @@ app.get('/facebook',(req,res)=>{
 })
 
 app.get('/twitter',(req,res)=>{
-    res.send('This is twitter')
-   
+    res.send('This is twitter') 
+})
+
+app.get('/product',(req,res)=>{
+    res.send('This is product page')
+    console.log('method:',req.method)
+    console.log('params:',req.params.id)
+    console.log('Query:',req.query)
+    console.log('protocol:',req.protocol)
+    console.log('ip:',req.ip)
+    console.log('originalUrl:',req.originalUrl)
+    console.log('path:',req.path)
 })
 
 app.listen(process.env.PORT || 3000 ,()=>{
