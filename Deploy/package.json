@@ -1,0 +1,21 @@
+{
+  "name": "deploy",
+  "version": "1.0.0",
+  "description": "simple backend project for deployment",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "keywords": [
+    "sohan",
+    "node",
+    "backend"
+  ],
+  "author": "sohan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
