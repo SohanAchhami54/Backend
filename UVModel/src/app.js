@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { connectDb } from './db/mongodb.js'
+import userRouter from './routes/user.route.js'
 dotenv.config() 
 const app=express() 
 
@@ -16,7 +17,11 @@ app.use(cookieParser())
 app.use(express.json({limit:'16KB'})) 
 app.use(express.urlencoded({extended:true,limit:'32KB'}))
 app.use(express.static('public'))
+
+//routes
+app.use('/users/v1/',userRouter)
 app.get('/',(req,res)=>{
+    res.send('Hello from backend')
     console.log('Hello from backend')
 })
 
