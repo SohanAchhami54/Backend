@@ -1,14 +1,19 @@
-import mongoose from 'mongoose' 
+import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+import dns from 'dns'
+dns.setServers(['8.8.8.8', '8.8.4.4'])
+// dns.setDefaultResultOrder('ipv4first');
+dotenv.config()
 
-const connectDb=async()=>{
+const connectDb = async () => {
   try {
-    const connect=await mongoose.connect(`${process.env.MONGODB_URL}`)
-    console.log('MongoDb database is connected')
+    const connect = await mongoose.connect(process.env.MONGODB_URL)
+    console.log('MongoDB database is connected')
     return connect
   } catch (error) {
-    console.log('Error occur while connecting to mongodb',error) 
+    console.log('Error occurred while connecting to MongoDB:', error)
     process.exit(1)
   }
 }
 
-export {connectDb}
+export { connectDb }
