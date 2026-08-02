@@ -1,8 +1,9 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import userRouter from './routes/user.route.js';
-
+dotenv.config();
 const app = express();
 
 const corsOptions = {
@@ -25,3 +26,4 @@ app.get('/', (req, res) => {
 });
 
 export default app;
+
