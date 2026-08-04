@@ -1,3 +1,5 @@
+import dotenv from 'dotenv' 
+dotenv.config()
 import { v2 as cloudinary } from 'cloudinary'
 import fs from 'fs'
 cloudinary.config({ 
@@ -12,10 +14,12 @@ const uploadonCloudinary=async(filepath)=>{
         const response=await cloudinary.uploader.upload(filepath,{
         resource_type:'auto'
     }) 
-    console.log('Url of the image is:',response.url)
+    // console.log('Url of the image is:',response.url) 
+    fs.unlinkSync(filepath)
     return response
 
     } catch (error) {
+        console.log('Cloudinary error:',error)
         fs.unlinkSync(filepath) 
         return null
     }
