@@ -1,5 +1,5 @@
 import { User } from '../models/user.model.js'
-import { createUser, findUserByEmailorName } from '../services/auth.js'
+import { createUser, findUserByEmailorName, findUserId } from '../services/auth.js'
 import { Apierror } from '../utils/Apierror.js'
 import { Apireponse } from '../utils/Apiresponse.js'
 import {Asyncerror} from '../utils/Asyncerror.js'
@@ -7,7 +7,6 @@ import { uploadonCloudinary } from '../utils/cloudinary.js'
 
 const userRegister=Asyncerror(async(req,res,next)=>{
   
-   console.log('the files are:',req.files)
    const {fullname,email,username,password}=req.body  
 
    //all field are required.
