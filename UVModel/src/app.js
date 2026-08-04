@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: '32KB' }))
 app.use(express.static('public'))
 
 // Routes
-app.use('/users/v1', userRouter)
+app.use('/api/v1/users', userRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello from backend')
