@@ -20,8 +20,8 @@ const userRegister=Asyncerror(async(req,res,next)=>{
    
  
  // avatar and coverageimage
-   const avatarlocalpath= req.files?.avatar[0]?.path  
-   const coveragelocalpath= req.files?.coverimage[0]?.path
+   const avatarlocalpath= req.files?.avatar?.[0]?.path  
+   const coveragelocalpath= req.files?.coverimage?.[0]?.path
    
    if(!avatarlocalpath) throw new Apierror(400,'AvatarLocalfiles not found.')
    
