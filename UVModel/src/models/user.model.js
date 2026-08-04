@@ -29,7 +29,6 @@ const userSchema=new mongoose.Schema({
     }, 
     coverimage:{
         type:String, 
-        required:true, 
     }, 
     refreshToken:{
        type:String, 
