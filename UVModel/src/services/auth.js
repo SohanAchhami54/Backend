@@ -1,12 +1,13 @@
 import { User } from "../models/user.model.js"
 
 const findUserByEmailorName=async(email,username)=>{
-    const user=await User.find({
+    const userbyen= await User.findOne({
         $or:[
             {email},
             {username}
         ]
-    })
+    }) 
+    return userbyen 
 } 
 
 const  findUserId=async(user)=>{
@@ -22,7 +23,8 @@ const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
         coverimage:coverimage?.url || '', 
         username:username.toLowerCase(), 
         password, 
-    })
+    }) 
+    return user
 }
 
 export {findUserByEmailorName,createUser,findUserId}
