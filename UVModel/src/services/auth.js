@@ -10,8 +10,8 @@ const findUserByEmailorName=async(email,username)=>{
 } 
 
 const  findUserId=async(user)=>{
-    const user= await User.findById(user._id).select('-password -refreshToken')
-    return user
+    const userbyid= await User.findById(user._id).select('-password -refreshToken')
+    return userbyid
 }
 
 const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
