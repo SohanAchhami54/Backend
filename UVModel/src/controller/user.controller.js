@@ -1,7 +1,7 @@
 import { User } from '../models/user.model.js'
-import { createUser, findUserByEmailorName, findUserId } from '../services/auth.js'
+import { createUser, findUserByEmailorName, findUserId, generateAccessandRefreshToken, logoutUser, userDetails } from '../services/auth.js'
 import { Apierror } from '../utils/Apierror.js'
-import { Apireponse } from '../utils/Apiresponse.js'
+import { Apiresponse } from '../utils/Apiresponse.js'
 import {Asyncerror} from '../utils/Asyncerror.js'
 import { uploadonCloudinary } from '../utils/cloudinary.js'
 
@@ -39,8 +39,63 @@ const userRegister=Asyncerror(async(req,res,next)=>{
   if(!createdUser) throw new Apierror(500,'User not Created.')
   
 
-  return res.status(201).json(new Apireponse(200,createdUser,'User Register.'))
+  return res.status(201).json(new Apiresponse(200,createdUser,'User Register.'))
 
 }) 
 
-export {userRegister}
+
+
+const userLogin=Asyncerror(async(req,res,next)=>{
+  const {email,username,password}=req.body  
+
+  if(!email && !username) throw new Apierror(400,'username or email is required')
+  
+  //find User
+  const existingUser= await findUserByEmailorName(email,username) 
+  if(!existingUser) throw new Apierror(404,'User doesnot exists cannot login') 
+
+  //password check
+  const isPasswordMatch=await existingUser.comparePassword(password) 
+  if(!isPasswordMatch) throw new Apierror(401,'Password do not match')
+
+  //access and refresh token 
+  const {accesstoken,refreshtoken}=await generateAccessandRefreshToken(existingUser._id)
+   
+  const userLogin=await  userDetails(existingUser._id)
+
+  const options={
+    httpOnly:true,
+    secure:true, 
+    sameSite:'strict'
+  }
+  return res.status(200)
+  .cookie('accessToken',accesstoken,options) 
+  .cookie('refreshToken',refreshtoken,options)
+  .json(
+    new Apiresponse(
+      200,
+      {
+        user:userLogin,accesstoken,refreshtoken
+      },
+      "User logged In"
+    )
+  )
+})
+
+const userLogout=Asyncerror(async(req,res)=>{ 
+   await logoutUser(req.user._id)
+    const options={
+    httpOnly:true,
+    secure:true, 
+    sameSite:'strict'
+  }
+
+  return res.status(200)
+  .clearCookie('accessToken',options)
+  .clearCookie('refreshToken',options) 
+  .json(new Apiresponse(200,{},'User logged out successfully'))
+
+})
+
+
+export {userRegister,userLogin,userLogout}
