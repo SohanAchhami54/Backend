@@ -15,6 +15,35 @@ const  findUserId=async(user)=>{
     return userbyid
 }
 
+const generateAccessandRefreshToken=async(userid)=>{
+   const user=await User.findById(userid) 
+   const accesstoken= user.generateAccessToken() 
+   const refreshtoken=user.generateRefreshToken() 
+
+   user.refreshToken=refreshtoken 
+   await user.save({validateBeforeSave:false}) 
+   return {
+       accesstoken
+       ,refreshtoken
+ }
+}
+
+const userDetails=async(userid)=>{
+    return await User.findById(userid).select('-password -refreshToken')
+}
+
+const logoutUser=async(userid)=>{
+  await User.findByIdAndUpdate(userid, 
+    {
+        $set:{
+            refreshToken:undefined
+        },
+    },{
+        returnDocument:'after'
+    }
+  )
+}
+
 const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
     const user=await User.create({
         fullname, 
@@ -27,4 +56,4 @@ const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
     return user
 }
 
-export {findUserByEmailorName,createUser,findUserId}
+export {findUserByEmailorName,createUser,findUserId,generateAccessandRefreshToken,userDetails,logoutUser}
