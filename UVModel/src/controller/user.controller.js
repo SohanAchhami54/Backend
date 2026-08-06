@@ -3,6 +3,7 @@ import { createUser, findUserByEmailorName, findUserId, generateAccessandRefresh
 import { Apierror } from '../utils/Apierror.js'
 import { Apiresponse } from '../utils/Apiresponse.js'
 import {Asyncerror} from '../utils/Asyncerror.js'
+import { verifyRefreshToken } from '../utils/auth.js'
 import { uploadonCloudinary } from '../utils/cloudinary.js'
 
 const userRegister=Asyncerror(async(req,res,next)=>{
@@ -35,14 +36,13 @@ const userRegister=Asyncerror(async(req,res,next)=>{
    
   const user= await createUser(fullname,email,username,password,avatar,coverimage) 
 
-  const createdUser= await findUserId(user)  
+  const createdUser= await userDetails(user._id)  
   if(!createdUser) throw new Apierror(500,'User not Created.')
   
 
   return res.status(201).json(new Apiresponse(200,createdUser,'User Register.'))
 
 }) 
-
 
 
 const userLogin=Asyncerror(async(req,res,next)=>{
@@ -97,5 +97,39 @@ const userLogout=Asyncerror(async(req,res)=>{
 
 })
 
+const generateNewAccessRefreshToken=Asyncerror(async(req,res)=>{
+   const incomingRequestToken=req.cookies.refreshToken || req.body.refreshToken 
+   if(!incomingRequestToken) throw new Apierror(401,'Token is invalid') 
+    
+   const decodedRefreshToken= verifyRefreshToken(incomingRequestToken) 
+
+   //now we get the email and id through which we generate refreshtoken 
+   const user=await findUserId(decodedRefreshToken._id)  
+   if(!user) throw new Apierror(401,'Invalid refresh Token')
+
+   if(incomingRequestToken!==user.refreshToken){
+     throw new Apierror(400,'Token do not match')
+   }
+   
+   const {accesstoken:newAccesstoken,refreshtoken:newRefreshtoken}=await generateAccessandRefreshToken(user._id) 
+    
+   const options={
+     httpOnly:true, 
+     secure:true,
+     sameSite:'strict'
+   }
+   
+   return res.status(200)
+   .cookie('accessToken',newAccesstoken,options) 
+   .cookie('refreshToken',newRefreshtoken,options) 
+   .json(
+       new Apiresponse(200,
+    {accesstoken,refreshtoken},
+    'New tokens are generated.'
+   ))
+
+
+
+})
 
 export {userRegister,userLogin,userLogout}
