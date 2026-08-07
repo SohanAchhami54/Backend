@@ -1,22 +1,22 @@
 import { User } from "../models/user.model.js"
+import { Apierror } from "../utils/Apierror.js"
 
 const findUserByEmailorName=async(email,username)=>{
-    const userbyen= await User.findOne({
+    return User.findOne({
         $or:[
             {email},
             {username}
         ]
-    }) 
-    return userbyen 
+    })    
 } 
 
 const  findUserId=async(userid)=>{
-    const userbyid= await User.findById(userid)
-    return userbyid
+    return User.findById(userid) 
 }
 
 const generateAccessandRefreshToken=async(userid)=>{
-   const user=await User.findById(userid) 
+   const user=await User.findById(userid)  
+   if(!user) throw new Apierror(404,'User not found')
    const accesstoken= user.generateAccessToken() 
    const refreshtoken=user.generateRefreshToken() 
 
@@ -29,23 +29,45 @@ const generateAccessandRefreshToken=async(userid)=>{
 }
 
 const userDetails=async(userid)=>{
-    return await User.findById(userid).select('-password -refreshToken')
+    return User.findById(userid).select('-password -refreshToken')
 }
 
 const logoutUser=async(userid)=>{
-  await User.findByIdAndUpdate(userid, 
+  return User.findByIdAndUpdate(userid, 
     {
-        $set:{
-            refreshToken:undefined
-        },
+        $unset:{refreshToken:1},
     },{
         returnDocument:'after'
     }
   )
+} 
+
+
+const saveNewPassword=async(user,newPassword)=>{
+   user.password=newPassword 
+   await user.save() //we must use await here.
+} 
+
+const updateUserDetails=async(userid,fullname,email)=>{  
+   return User.findByIdAndUpdate(userid, 
+    {
+        $set:{fullname, email}
+    },{
+        returnDocument:'after' //return the updated user.
+    }
+   ).select('-password -refreshToken')
+}  
+
+const findUserForAccountUpdate=async(userid,email)=>{
+   return  User.findOne({
+    email,
+    _id:{$ne:userid}
+})
 }
 
+
 const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
-    const user=await User.create({
+    const user= await User.create({
         fullname, 
         email,
         avatar:avatar.url, 
@@ -56,4 +78,4 @@ const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
     return user
 }
 
-export {findUserByEmailorName,createUser,findUserId,generateAccessandRefreshToken,userDetails,logoutUser}
+export {findUserByEmailorName,createUser,findUserId,generateAccessandRefreshToken,userDetails,logoutUser,saveNewPassword,updateUserDetails,findUserForAccountUpdate}
