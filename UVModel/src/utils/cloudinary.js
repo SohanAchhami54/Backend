@@ -6,7 +6,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
   api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+})
 
 const uploadonCloudinary=async(filepath)=>{
     try {
@@ -15,12 +15,16 @@ const uploadonCloudinary=async(filepath)=>{
         resource_type:'auto'
     }) 
     // console.log('Url of the image is:',response.url) 
-    fs.unlinkSync(filepath)
+    if(fs.existsSync(filepath)){
+         fs.unlinkSync(filepath)
+    }
     return response
 
     } catch (error) {
-        console.log('Cloudinary error:',error)
-        fs.unlinkSync(filepath) 
+        console.log('Cloudinary error:',error) 
+        if(fs.existsSync(filepath)){
+            fs.unlinkSync(filepath) 
+        }
         return null
     }
 }
