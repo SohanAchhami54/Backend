@@ -12,7 +12,7 @@ router.post('/register',upload.fields([
 router.post('/login',userLogin)  
 router.post('/reset-token',generateNewAccessRefreshToken)
 router.post('/changepassword',isProtected,changePassword) 
-router.post('/getcurrentuser',isProtected,getCurrentUser) 
+router.get('/getcurrentuser',isProtected,getCurrentUser) 
 router.patch('/updateuser',isProtected,updateAccountDetails)
 router.post('/logout',isProtected,userLogout) 
 
