@@ -1,5 +1,4 @@
-import { User } from '../models/user.model.js'
-import { createUser, findUserByEmailorName, findUserId, generateAccessandRefreshToken, logoutUser, userDetails } from '../services/auth.js'
+import { createUser, findUserByEmailorName, findUserForAccountUpdate, findUserId, generateAccessandRefreshToken, logoutUser, saveNewPassword, updateUserDetails, userDetails } from '../services/auth.js'
 import { Apierror } from '../utils/Apierror.js'
 import { Apiresponse } from '../utils/Apiresponse.js'
 import {Asyncerror} from '../utils/Asyncerror.js'
@@ -11,7 +10,7 @@ const userRegister=Asyncerror(async(req,res,next)=>{
    const {fullname,email,username,password}=req.body  
 
    //all field are required.
-   if([fullname,email,username,password].some((field)=>field.trim()==="")){
+   if([fullname,email,username,password].some((field)=>!field || field.trim()==="")){
       throw new Apierror(400,'All field are required') 
    }
     
@@ -43,7 +42,6 @@ const userRegister=Asyncerror(async(req,res,next)=>{
   return res.status(201).json(new Apiresponse(200,createdUser,'User Register.'))
 
 }) 
-
 
 const userLogin=Asyncerror(async(req,res,next)=>{
   const {email,username,password}=req.body  
@@ -124,12 +122,52 @@ const generateNewAccessRefreshToken=Asyncerror(async(req,res)=>{
    .cookie('refreshToken',newRefreshtoken,options) 
    .json(
        new Apiresponse(200,
-    {accesstoken,refreshtoken},
+        {accesstoken:newAccesstoken ,refreshtoken:newRefreshtoken},
     'New tokens are generated.'
    ))
 
 
 
+}) 
+
+const changePassword=Asyncerror(async(req,res)=>{
+  const {oldPassword,newPassword,confirmPassword}=req.body  
+  if(!newPassword || !confirmPassword) throw new Apierror(400,'New password is required.')
+
+  if(newPassword!==confirmPassword) throw new Apierror(400,'Password do not match') 
+
+  const user=await findUserId(req.user._id) 
+  if(!user) throw new Apierror(404,'User not found') 
+
+  const isPasswordCorrect = await user.comparePassword(oldPassword)
+  if(!isPasswordCorrect) throw new Apierror(400,'Invalid Password') 
+
+  await saveNewPassword(user,newPassword) 
+
+  return res.status(200).json(new Apiresponse(200,{},'Password Change Successfully'))
+}) 
+
+const getCurrentUser=Asyncerror(async(req,res)=>{
+  return res.status(200)
+  .json(new Apiresponse(200,{userinfo:req.user},'Current User fetch successfully')) 
 })
 
-export {userRegister,userLogin,userLogout}
+const updateAccountDetails=Asyncerror(async(req,res)=>{
+  const fullname=req.body.fullname?.trim() 
+  const email= req.body.email?.trim()
+  if((!fullname || !email)) throw new Apierror(400,'All fields are required')  
+
+
+  const existingUser = await findUserForAccountUpdate(req.user._id,email) 
+  if(existingUser) throw new Apierror(409,'User with this email already exists')
+
+
+  const user= await updateUserDetails(req.user._id, fullname,email) 
+  if(!user) throw new Apierror(400,'user fail to updated.')
+  
+
+  return res.status(200) 
+  .json(new Apiresponse(200,{user},'User Details update successfully.'))
+})
+
+export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails}
