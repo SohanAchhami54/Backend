@@ -1,5 +1,5 @@
 import express from 'express' 
-import { changePassword, generateNewAccessRefreshToken, getCurrentUser, updateAccountDetails, userLogin, userLogout, userRegister } from '../controller/user.controller.js'
+import { changePassword, generateNewAccessRefreshToken, getCurrentUser, updateAccountDetails, updateAvatarImage, updateCoverImage, userLogin, userLogout, userRegister } from '../controller/user.controller.js'
 import { upload } from '../middleware/multer.middleware.js'
 import { isProtected } from '../middleware/auth.middleware.js'
 const router=express.Router() 
@@ -14,6 +14,10 @@ router.post('/reset-token',generateNewAccessRefreshToken)
 router.post('/changepassword',isProtected,changePassword) 
 router.get('/getcurrentuser',isProtected,getCurrentUser) 
 router.patch('/updateuser',isProtected,updateAccountDetails)
+
+router.patch('/updateavatarimage',isProtected,updateAvatarImage) 
+router.patch('/updatecoverimage',isProtected,updateCoverImage)
+
 router.post('/logout',isProtected,userLogout) 
 
 export default router
