@@ -15,8 +15,8 @@ router.post('/changepassword',isProtected,changePassword)
 router.get('/getcurrentuser',isProtected,getCurrentUser) 
 router.patch('/updateuser',isProtected,updateAccountDetails)
 
-router.patch('/updateavatarimage',isProtected,updateAvatarImage) 
-router.patch('/updatecoverimage',isProtected,updateCoverImage)
+router.patch('/updateavatarimage',isProtected,upload.single('avatar'),updateAvatarImage) 
+router.patch('/updatecoverimage',isProtected,upload.single('coverimage'),updateCoverImage)
 
 router.post('/logout',isProtected,userLogout) 
 
