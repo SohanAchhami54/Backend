@@ -199,4 +199,4 @@
     json(new Apiresponse(200,user,'User updated'))
   })
 
-  export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails}
+  export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails,updateAvatarImage,updateCoverImage}
