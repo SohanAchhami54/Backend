@@ -9,3 +9,4 @@ app.get('/',(req,res)=>{
 app.listen(process.env.PORT||4000,(req,res)=>{
     console.log(`Server is running in the port:${process.env.PORT}`)
 });
+    

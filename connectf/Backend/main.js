@@ -7,10 +7,10 @@ const app=express()
 const corsheader={
     origin:'http://localhost:5173',
     methods:['GET','POST','DELETE','PUT'],
-    credentials:true
+    credentials:true 
 }
 app.use(cors(corsheader))
-app.get('/jokes',(req,res)=>{
+app.get('/api/jokes',(req,res)=>{
    const jokes = [
   { id: 1, title: "Programmer Joke", joke: "Why do programmers prefer dark mode? Because light attracts bugs." },
   { id: 2, title: "Array Joke", joke: "Why did the array break up with the object? It needed more space." },
@@ -65,6 +65,7 @@ app.get('/jokes',(req,res)=>{
 ];
     res.send(jokes)
 })
+
 
 app.listen(process.env.PORT ||3000,()=>{
      console.log(`Server is running at the port:${process.env.PORT}`)

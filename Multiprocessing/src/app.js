@@ -11,10 +11,3 @@ import cors from 'cors'
  })
 
  export default app
-
-
-
-
-
-
-

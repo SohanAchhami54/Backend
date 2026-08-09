@@ -15,8 +15,6 @@ const App = () => {
   return (
    <>
    <div className='mx-10 my-5'>
-
-
      <h1 className='text-xl bg-blue-400 mt-3'>Hello This is jokes</h1>
      <ul className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mt-6'>
        {
@@ -25,7 +23,7 @@ const App = () => {
             <li key={joke.id} className='bg-gray-700 text-white text-sm sm:text-base'>
               <div className='m-4 bg-neutral-600 h-50 space-y-8'>
                <h1>{joke.id} </h1>
-                 <p>{joke.title} </p>
+                 <p>{joke.title} </p> 
                  <p>{joke.joke} </p>
               </div>
                  
