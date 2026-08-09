@@ -65,6 +65,14 @@ const findUserForAccountUpdate=async(userid,email)=>{
 })
 }
 
+const updateImageUrl=async(userid,imageurl)=>{
+   return User.findByIdAndUpdate(userid,{
+      $set:{avatar:imageurl},
+    },
+    {returnDocument:'after'}
+).select('-password -refreshToken')
+}
+
 
 const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
     const user= await User.create({
@@ -78,4 +86,4 @@ const createUser=async(fullname,email,username,password,avatar,coverimage)=>{
     return user
 }
 
-export {findUserByEmailorName,createUser,findUserId,generateAccessandRefreshToken,userDetails,logoutUser,saveNewPassword,updateUserDetails,findUserForAccountUpdate}
+export {findUserByEmailorName,createUser,findUserId,generateAccessandRefreshToken,userDetails,logoutUser,saveNewPassword,updateUserDetails,findUserForAccountUpdate,updateImageUrl}
