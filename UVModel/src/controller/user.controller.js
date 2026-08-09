@@ -3,7 +3,7 @@
   import { Apiresponse } from '../utils/Apiresponse.js'
   import {Asyncerror} from '../utils/Asyncerror.js'
   import { verifyRefreshToken } from '../utils/auth.js'
-  import { uploadonCloudinary } from '../utils/cloudinary.js'
+  import { deleteFromCloudinary, uploadonCloudinary } from '../utils/cloudinary.js'
 
   const userRegister=Asyncerror(async(req,res,next)=>{
     
@@ -173,15 +173,23 @@
   const updateAvatarImage=Asyncerror(async(req,res)=>{
     const avatarlocalpath=req.file?.path 
     if(!avatarlocalpath) throw new Apierror(400,'Avatar path is not available') 
+   
+    const user= await findUserId(req.user._id) 
+    if(!user) throw new Apierror(400,'User not found') 
+    const oldAvatar=user.avatar
 
     const avatarImage = await uploadonCloudinary(avatarlocalpath) 
-    if(!avatarlocalpath) throw new Apierror(400,'Avatar image is not upload on cloudinary') 
+    if(!avatarImage) throw new Apierror(400,'Avatar image is not upload on cloudinary') 
     
-    const user= await updateImageUrl(req.user?._id,avatarImage.url)
-    if(!user) throw new Apierror(409,'User not updated') 
+    const updatedUser= await updateImageUrl(req.user?._id,avatarImage.url)
+    if(!updatedUser) throw new Apierror(409,'User not updated')   
+
+    if(oldAvatar){
+      await deleteFromCloudinary(oldAvatar)
+    } 
 
     return res.status(200)
-    .json(new Apiresponse(200,user,'User updated'))
+    .json(new Apiresponse(200,updatedUser,'User avatar updated'))
   })
 
 
@@ -189,14 +197,22 @@
     const coverlocalpath=req.file?.path 
     if(!coverlocalpath) throw new Apierror(400,'CoverImage path is not available') 
 
+     const user= await findUserId(req.user._id) 
+    if(!user) throw new Apierror(400,'User not found') 
+    const oldAvatar=user.coverimage
+
     const coverImage = await uploadonCloudinary(coverlocalpath) 
     if(!coverImage) throw new Apierror(400,'Cover image is not upload on cloudinary') 
 
-    const user = await updateImageUrl(req.user._id,coverImage.url) 
-    if(!user) throw new Apierror(409,'User not updated') 
+    const updatedUser = await updateImageUrl(req.user._id,coverImage.url) 
+    if(!updatedUser) throw new Apierror(409,'User not updated')
+      
+     if(oldAvatar){
+      await deleteFromCloudinary(oldAvatar)
+    } 
       
     return res.status(200). 
-    json(new Apiresponse(200,user,'User updated'))
+    json(new Apiresponse(200,user,'User cover updated'))
   })
 
   export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails,updateAvatarImage,updateCoverImage}
