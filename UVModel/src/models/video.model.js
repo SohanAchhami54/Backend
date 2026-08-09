@@ -1,6 +1,6 @@
 import mongoose from 'mongoose' 
 
-const userSchema=new mongoose.Schema({
+const videoSchema=new mongoose.Schema({
     videofile:{
         type:String, 
         required:true,
@@ -35,4 +35,4 @@ const userSchema=new mongoose.Schema({
     }
 },{timestamps:true})
 
-export const User=mongoose.model('User',userSchema)
+export const Video=mongoose.model('Video',videoSchema)
