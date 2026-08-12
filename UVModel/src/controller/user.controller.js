@@ -1,4 +1,5 @@
   import { createUser, findUserByEmailorName, findUserForAccountUpdate, findUserId, generateAccessandRefreshToken, logoutUser, saveNewPassword, updateImageUrl, updateUserDetails, userDetails } from '../services/auth.js'
+  import { userAggregate, watchHistoryAggregate } from '../services/pipeline.js'
   import { Apierror } from '../utils/Apierror.js'
   import { Apiresponse } from '../utils/Apiresponse.js'
   import {Asyncerror} from '../utils/Asyncerror.js'
@@ -214,5 +215,29 @@
     return res.status(200). 
     json(new Apiresponse(200,user,'User cover updated'))
   })
+
+  const getChannelInfo=Asyncerror(async(req,res)=>{
+    const {username}=req.params  
+    if(!username.trim()) throw new Apierror(400,'Username not defined') 
+
+   const channel = await userAggregate(username,req.user?._id)  
+   console.log('channel name is:',channel)
+   if(!channel?.length) throw new Apierror(404,'Channel does not exist') 
+
+   return res.status(200) 
+   .json(new Apiresponse(200,channel,'Channel info fetched successfully'))
+  }) 
+ 
+  const getWatchHistory=Asyncerror(async(req,res)=>{ 
+    const userid=req.user?._id 
+    if(!userid) throw new Apierror(400,'User id not found')
+
+    const user= await watchHistoryAggregate(userid) 
+    if(!user) throw new Apierror(404,'Watchhistory not found')   
+
+    return res.status(200)
+    .json(new Apiresponse(200,user.watchHistory,'Watch history fetched successfully'))
+  })
+
 
   export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails,updateAvatarImage,updateCoverImage}
