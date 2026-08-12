@@ -240,4 +240,4 @@
   })
 
 
-  export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails,updateAvatarImage,updateCoverImage}
+  export {userRegister,userLogin,userLogout,changePassword,generateNewAccessRefreshToken,getCurrentUser,updateAccountDetails,updateAvatarImage,updateCoverImage,getChannelInfo,getWatchHistory}
