@@ -4,6 +4,7 @@ dotenv.config()
 import cors from 'cors'
 import cookieParser from 'cookie-parser' 
 import userRouter from './routes/user.routes.js'
+import { errorMiddleware } from './middleware/error.middleware.js'
 const app=express() 
 
 const corsOptions={
@@ -17,6 +18,8 @@ app.use(cookieParser())
 app.use(express.json({limit:'16KB'})) 
 app.use(express.urlencoded({extended:true,limit:'32KB'}))  
 app.use(express.static('public')) 
-app.use('/api/v1/users',userRouter)
+app.use('/api/v1/users',userRouter) 
+
+app.use(errorMiddleware)
 
 export default app 
