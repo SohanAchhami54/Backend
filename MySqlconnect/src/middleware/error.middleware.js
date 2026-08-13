@@ -7,3 +7,5 @@ const errorMiddleware=(err,req,res,next)=>{
         errors:err.error || []
     })
 }
+
+export {errorMiddleware}
