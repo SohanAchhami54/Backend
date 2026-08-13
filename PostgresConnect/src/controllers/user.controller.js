@@ -8,7 +8,7 @@ const userRegister=Asyncerror(async(req,res)=>{
     if(!name || !email || !password) throw new Apierror(400,'All field are required') 
     
     const existingUser= await findUserByEmail(email) 
-    if(existingUser) throw new Apierror(400,'All field are required')
+    if(existingUser) throw new Apierror(400,'User with this email already exists')
 
     const user = await createUser(name,email,password) 
     if(!user) throw new Apierror(400,'User not created') 
