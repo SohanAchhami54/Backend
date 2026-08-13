@@ -1,6 +1,7 @@
 import dotenv from 'dotenv' 
 import app from './app.js'
-import connection from './db/mysql.js'
+import { connection } from './db/mysql.js'
+
 dotenv.config() 
 const PORT=process.env.PORT || 3002
 
