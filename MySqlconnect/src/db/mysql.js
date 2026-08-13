@@ -21,4 +21,4 @@ async function connection(){
     }
 }
 
-export default connection 
+export {connection,connectSql} 
