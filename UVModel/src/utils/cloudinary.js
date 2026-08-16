@@ -43,4 +43,34 @@ const deleteFromCloudinary = async (imageUrl) => {
         return null
     }
 }
-export {uploadonCloudinary,deleteFromCloudinary}
+
+
+const uploadVideoonCloudinary = async (filepath) => {
+    try {
+        const buffer = fs.readFileSync(filepath)
+
+        const response = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { resource_type: 'video' },
+                (error, result) => {
+                    if (error) reject(error)
+                    else resolve(result)
+                }
+            ).end(buffer)
+        })
+
+        fs.unlinkSync(filepath)
+
+        return response
+
+    } catch (error) {
+        console.log('Cloudinary error:', error)
+
+        if (fs.existsSync(filepath)) {
+            fs.unlinkSync(filepath)
+        }
+
+        return null
+    }
+}
+export {uploadonCloudinary,deleteFromCloudinary,uploadVideoonCloudinary}
