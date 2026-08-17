@@ -1,8 +1,8 @@
-import { createVideo } from "../services/video.js"
+import { createVideo, findOwnerVideoDetails, updateVideoThumbnail } from "../services/video.js"
 import { Apierror } from "../utils/Apierror.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { Asyncerror } from "../utils/Asyncerror.js"
-import { uploadonCloudinary, uploadVideoonCloudinary } from "../utils/cloudinary.js"
+import { deleteFromCloudinary, uploadonCloudinary, uploadVideoonCloudinary } from "../utils/cloudinary.js"
 
 const videoUpload = Asyncerror(async(req,res)=>{ 
     const {title,description} = req.body 
@@ -33,10 +33,30 @@ const videoUpload = Asyncerror(async(req,res)=>{
 })
 
 
-// const updateThumbnail =Asyncerror(async(req,res)=>{
-//     const user = req.user._id  
+const updateThumbnail =Asyncerror(async(req,res)=>{ 
+    const newthumbnailpath = req.file?.path 
+    if(!newthumbnailpath) throw new Apierror(400,'Thumb nail path is not defined') 
+
+    // const oldThumbnailurl = await  findUserId(req.user._id) 
+    const videoDetail = await findOwnerVideoDetails(req.params.videoId) 
+    if(!videoDetail) throw new Apierror(400,'Owner Detail not found') 
+    const oldThumbnailurl = videoDetail?.thumbnail
+
+    const newthumbnailurl = await uploadonCloudinary(newthumbnailpath) 
+    if(!newthumbnailurl) throw new Apierror(400,'Thumb nail not uploaded on cloudinary') 
     
-// })
+    const updatenewurl = await updateVideoThumbnail(req.params.videoId,newthumbnailurl.url) 
+    if(!updatenewurl) throw new Apierror(400,'Image not updated on database')
+
+    if(oldThumbnailurl){
+        await deleteFromCloudinary(oldThumbnailurl)
+    }
+
+    return res.status(200)
+    .json(
+        new Apiresponse(200,updatenewurl,'Thumb nail updated')
+    )
+})
 
 
 export {videoUpload,updateThumbnail}
