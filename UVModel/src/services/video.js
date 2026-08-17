@@ -10,4 +10,17 @@ const createVideo = async(videofileonCloudinary,thumbnailonCloudinary,owner,titl
       duration:videofileonCloudinary?.duration
   })
 }
-export {createVideo}
+
+const findOwnerVideoDetails= async(videoid)=>{
+   return Video.findById(videoid)
+}
+
+const updateVideoThumbnail=async(userid,thumnnailurl)=>{
+  return Video.findByIdAndUpdate(userid, {
+    $set:{thumbnail:thumnnailurl},     
+  },
+  {returnDocument:'after'}
+)
+}
+
+export {createVideo,findOwnerVideoDetails,updateVideoThumbnail}
