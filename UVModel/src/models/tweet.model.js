@@ -1,5 +1,5 @@
 import mongoose from "mongoose" 
-const likeSchema = new mongoose.Schema({
+const tweetSchema = new mongoose.Schema({
      content:{
        type:String,
        required:true
@@ -10,4 +10,4 @@ const likeSchema = new mongoose.Schema({
      }
 },{timestamps:true}) 
 
-export const Like = mongoose.model(Like,likeSchema)
+export const Tweet = mongoose.model(Tweet,tweetSchema)
