@@ -5,7 +5,6 @@ import { verifyJwt } from "../utils/auth.js";
 
 const isProtected=Asyncerror(async(req,res,next)=>{
    const token=req.cookies?.accessToken || req.header('Authorization')?.replace('Bearer ','')  
-   console.log('token value is:',token)
    if(!token) throw new Apierror(400,'Token not found')
 
    const decodedToken=verifyJwt(token)  
