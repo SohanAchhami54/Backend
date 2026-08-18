@@ -47,4 +47,12 @@ const deleteVideoById= async(videoId)=>{
    return Video.findByIdAndDelete(videoId)
 }
 
-export {createVideo,findOwnerVideoDetails,updateVideoDetails,allvideoByOwnerId,findVideoById,deleteVideoById}
+const toggleStatus=async(videoId)=>{
+  const video = await Video.findById(videoId) 
+  if(!video) return null 
+
+  video.isPublished= !video.isPublished 
+  return await video.save()
+}
+
+export {createVideo,findOwnerVideoDetails,updateVideoDetails,allvideoByOwnerId,findVideoById,deleteVideoById,toggleStatus}
