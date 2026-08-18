@@ -43,4 +43,8 @@ const findVideoById = async(videoId)=>{
   return  Video.findById(videoId).populate('owner')
 }
 
-export {createVideo,findOwnerVideoDetails,updateVideoDetails,allvideoByOwnerId,findVideoById}
+const deleteVideoById= async(videoId)=>{
+   return Video.findByIdAndDelete(videoId)
+}
+
+export {createVideo,findOwnerVideoDetails,updateVideoDetails,allvideoByOwnerId,findVideoById,deleteVideoById}
