@@ -3,7 +3,7 @@ import { Video } from "../models/video.model.js"
 const createVideo = async(videofileonCloudinary,thumbnailonCloudinary,owner,title,description)=>{
   return await Video.create({
      videofile:videofileonCloudinary?.url, 
-      thumbnail:thumbnailonCloudinary?.url, 
+      thumbnail:thumbnailonCloudinary?.url || '' , 
       owner, 
       title, 
       description,
@@ -23,4 +23,10 @@ const updateVideoThumbnail=async(userid,thumnnailurl)=>{
 )
 }
 
-export {createVideo,findOwnerVideoDetails,updateVideoThumbnail}
+
+const videoByOwnerId=async(ownerid)=>{
+  return Video.find({owner:ownerid})
+}
+
+
+export {createVideo,findOwnerVideoDetails,updateVideoThumbnail,videoByOwnerId}
