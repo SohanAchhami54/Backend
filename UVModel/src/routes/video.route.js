@@ -1,5 +1,5 @@
 import express from 'express' 
-import {updateThumbnail,videoUpload } from '../controller/video.controller.js'
+import {getAllVideos, updateThumbnail,videoUpload } from '../controller/video.controller.js'
 import { isProtected } from '../middleware/auth.middleware.js'
 import { upload } from '../middleware/multer.middleware.js'
 const router= express.Router() 
@@ -10,5 +10,5 @@ router.post('/videoupload',isProtected,upload.fields([
 ]),videoUpload)
 
 router.patch('/updatethumbnail/:videoId',isProtected,upload.single('thumbnail'),updateThumbnail)
-
+router.get('/getallvideo',isProtected,getAllVideos)
 export default router
