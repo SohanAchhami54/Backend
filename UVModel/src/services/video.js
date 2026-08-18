@@ -12,21 +12,35 @@ const createVideo = async(videofileonCloudinary,thumbnailonCloudinary,owner,titl
 }
 
 const findOwnerVideoDetails= async(videoid)=>{
-   return Video.findById(videoid)
+   return Video.findById(videoid).populate('owner')
 }
 
-const updateVideoThumbnail=async(userid,thumnnailurl)=>{
-  return Video.findByIdAndUpdate(userid, {
-    $set:{thumbnail:thumnnailurl},     
+const updateVideoDetails=async(videoId,title,description,newthumbnailurl)=>{
+   const updateData={} 
+   if(title!==undefined){
+     updateData.title=title
+   }
+   if(description!==undefined){
+     updateData.description=title
+   }
+
+   if(newthumbnailurl!==undefined){
+      updateData.thumbnail=newthumbnailurl
+   }
+
+  return Video.findByIdAndUpdate(videoId, {
+    $set:updateData    
   },
   {returnDocument:'after'}
 )
 }
 
-
-const videoByOwnerId=async(ownerid)=>{
+const allvideoByOwnerId=async(ownerid)=>{
   return Video.find({owner:ownerid})
 }
 
+const findVideoById = async(videoId)=>{
+  return  Video.findById(videoId).populate('owner')
+}
 
-export {createVideo,findOwnerVideoDetails,updateVideoThumbnail,videoByOwnerId}
+export {createVideo,findOwnerVideoDetails,updateVideoDetails,allvideoByOwnerId,findVideoById}
