@@ -1,15 +1,15 @@
-import { createVideo, findOwnerVideoDetails, updateVideoThumbnail, videoByOwnerId } from "../services/video.js"
+import { allvideoByOwnerId, createVideo, findOwnerVideoDetails, findVideoById, updateVideoDetails,  } from "../services/video.js"
 import { Apierror } from "../utils/Apierror.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { Asyncerror } from "../utils/Asyncerror.js"
 import { deleteFromCloudinary, uploadonCloudinary, uploadVideoonCloudinary } from "../utils/cloudinary.js"
-import fs from 'fs'
+
 const videoUpload = Asyncerror(async(req,res)=>{ 
     const {title,description} = req.body 
     if(!title || !description){
         throw new Apierror(400,'All field are required')
     }
-
+    
     const videofile = req.files?.videofile?.[0]?.path 
     const thumbnail = req.files?.thumbnail?.[0]?.path
    
@@ -35,28 +35,44 @@ const videoUpload = Asyncerror(async(req,res)=>{
 })
 
 
-const updateThumbnail =Asyncerror(async(req,res)=>{ 
-    const newthumbnailpath = req.file?.path 
-    if(!newthumbnailpath) throw new Apierror(400,'Thumb nail path is not defined') 
-
-    // const oldThumbnailurl = await  findUserId(req.user._id) 
-    const videoDetail = await findOwnerVideoDetails(req.params.videoId) 
-    if(!videoDetail) throw new Apierror(400,'Owner Detail not found') 
-    const oldThumbnailurl = videoDetail?.thumbnail
-
-    const newthumbnailurl = await uploadonCloudinary(newthumbnailpath) 
-    if(!newthumbnailurl) throw new Apierror(400,'Thumb nail not uploaded on cloudinary') 
+const updateVideo =Asyncerror(async(req,res)=>{  
+    const {videoId} = req.params  
+    if(!videoId) throw new Apierror(400,'VideoId not found')
     
-    const updatenewurl = await updateVideoThumbnail(req.params.videoId,newthumbnailurl.url) 
-    if(!updatenewurl) throw new Apierror(400,'Image not updated on database')
+    const videoDetail = await findOwnerVideoDetails(videoId) 
+    if(!videoDetail) throw new Apierror(400,'Owner Detail not found')
+    
+    if(req.user._id.toString()!==videoDetail.owner._id.toString()) {
+        throw new Apierror(403,'User not authorized to update video details')
+    }
 
-    if(oldThumbnailurl){
+    const {title, description} =req.body 
+    const newthumbnailpath = req.file?.path 
+    
+    if(title === undefined && description === undefined && !newthumbnailpath){
+        throw new Apierror(400,'At least one field is required')
+    }
+
+    const oldThumbnailurl = videoDetail?.thumbnail
+   
+    let newthumbnailurl
+    if(newthumbnailpath){
+       const updatethumbnailurl = await uploadonCloudinary(newthumbnailpath)
+       if(!updatethumbnailurl) throw new Apierror(400,'Thumb nail not uploaded on cloudinary')
+        newthumbnailurl= updatethumbnailurl?.url
+    } 
+
+    //update video details 
+    const updateVideo = await updateVideoDetails(videoId,title,description,newthumbnailurl) 
+    if(!updateVideo) throw new Apierror(400,'Video not updated')
+
+    if(newthumbnailurl && oldThumbnailurl){
         await deleteFromCloudinary(oldThumbnailurl)
     }
 
     return res.status(200)
     .json(
-        new Apiresponse(200,updatenewurl,'Thumb nail updated')
+        new Apiresponse(200,updateVideo,'Thumb nail updated')
     )
 })
 
@@ -64,7 +80,7 @@ const updateThumbnail =Asyncerror(async(req,res)=>{
 const getAllVideos= Asyncerror(async(req,res)=>{
   const {page=1,limit=10,query,sortBy,sortType,userId} = req.query 
 
-  const getVideo = await videoByOwnerId(userId)
+  const getVideo = await allvideoByOwnerId(userId)
   if(getVideo.length===0) throw new Apierror(400,'Cannot fetch the videos')
 
   let video = getVideo
@@ -94,4 +110,18 @@ const getAllVideos= Asyncerror(async(req,res)=>{
   )
 })
 
-export {videoUpload,updateThumbnail,getAllVideos}
+const getVideoById= Asyncerror(async(req,res)=>{
+    const {videoId} = req.params
+    if(!videoId) throw new Apierror(400,'Video id not found')
+
+    const videoDetails = await findVideoById(videoId)
+    if(!videoDetails) throw new Apierror(400,'VideoDetails not found')
+
+    return res.status(200)
+    .json(
+        new Apiresponse(200,videoDetails,'Specific Video fetched successfully')
+    )
+})
+
+
+export {videoUpload,updateVideo,getAllVideos,getVideoById}
