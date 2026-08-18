@@ -1,4 +1,4 @@
-import { allvideoByOwnerId, createVideo, deleteVideoById, findOwnerVideoDetails, findVideoById, updateVideoDetails,  } from "../services/video.js"
+import { allvideoByOwnerId, createVideo, deleteVideoById, findOwnerVideoDetails, findVideoById, toggleStatus, updateVideoDetails,  } from "../services/video.js"
 import { Apierror } from "../utils/Apierror.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { Asyncerror } from "../utils/Asyncerror.js"
@@ -143,4 +143,24 @@ const deleteVideo = Asyncerror(async(req,res)=>{
     )
 })
 
-export {videoUpload,updateVideo,getAllVideos,getVideoById,deleteVideo}
+const togglePublishStatus =Asyncerror(async(req,res)=>{
+    const {videoId} =req.params 
+    if(!videoId) throw new Apierror(400,'Video id not found') 
+    
+    const videoDetail = await findOwnerVideoDetails(videoId) 
+    if(!videoDetail) throw new Apierror(400,'Owner Detail not found')
+    
+    if(req.user._id.toString()!==videoDetail.owner._id.toString()) {
+        throw new Apierror(403,'User not authorized to toggle video')
+    }
+     
+   const updatedVideo = await toggleStatus(videoId) 
+   if(!updatedVideo) throw new Apierror(400,'Video publish status could not be updated') 
+
+    return res.status(200)
+    .json(
+        new Apiresponse(200,updatedVideo,'Video publish status updated successfully')
+    )
+})
+
+export {videoUpload,updateVideo,getAllVideos,getVideoById,deleteVideo,togglePublishStatus}
