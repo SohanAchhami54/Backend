@@ -80,33 +80,13 @@ const updateVideo =Asyncerror(async(req,res)=>{
 const getAllVideos= Asyncerror(async(req,res)=>{
   const {page=1,limit=10,query,sortBy,sortType,userId} = req.query 
 
-  const getVideo = await allvideoByOwnerId(userId)
+
+  const getVideo = await allvideoByOwnerId(page,limit,query,sortBy,sortType,userId)
   if(getVideo.length===0) throw new Apierror(400,'Cannot fetch the videos')
-
-  let video = getVideo
-  if(query){
-     video = video.filter(video=>
-        video.title.toLowerCase().includes(query.toLowerCase())
-     )
-  }
- 
-  //sort
- if(sortBy){
-    video.sort((a,b)=>{
-        if(sortType==='desc'){
-            return a[sortBy] < b[sortBy] ? 1 : -1 
-        } 
-        return a[sortBy] > b[sortBy] ? 1: -1 
-    })
- }
-
- //pagination 
-   const skip = (page-1)*limit 
-   video = video.slice(skip,skip + Number(limit))
 
   return res.status(200)
   .json(
-    new Apiresponse(200,video,'Video fetched successfully')
+    new Apiresponse(200,getVideo,'Video fetched successfully')
   )
 })
 
