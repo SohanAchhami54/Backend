@@ -27,4 +27,8 @@ const updatedComment = async(commentId, content)=>{
 )
 }
 
-export {findallcommentforvideo,commentAddedtoVideo,findCommentById,updatedComment}
+const deletedComment = async(commentId)=>{
+  return Comment.findByIdAndDelete(commentId)
+}
+
+export {findallcommentforvideo,commentAddedtoVideo,findCommentById,updatedComment,deletedComment}
