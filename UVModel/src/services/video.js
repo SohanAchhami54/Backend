@@ -35,9 +35,25 @@ const updateVideoDetails=async(videoId,title,description,newthumbnailurl)=>{
 )
 }
 
-const allvideoByOwnerId=async(ownerid)=>{
-  return Video.find({owner:ownerid})
+const allvideoByOwnerId=async(page,limit,query,sortBy,sortType,userId)=>{
+  const filter = {} 
+  if(userId){
+    filter.owner = userId
+  }
+
+  if(query){
+    filter.title = { $regex:query , $options: 'i'} 
+  }
+
+  const skip = (Number(page)-1)* Number(limit) 
+
+  return Video.find(filter)
+  .sort({[sortBy]:sortType==='desc'?-1:1})
+  .skip(Number(skip))
+  .limit(Number(limit)) 
+  .populate('owner')
 }
+
 
 const findVideoById = async(videoId)=>{
   return  Video.findById(videoId).populate('owner')
