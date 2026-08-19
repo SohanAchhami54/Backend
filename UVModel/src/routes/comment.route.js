@@ -4,6 +4,6 @@ import { addComment, getVideoComments } from '../controller/comment.controller.j
 
 const router = express.Router() 
 
-router.get('/getallcomments',isProtected,getVideoComments)
+router.get('/getallcomments/:videoId',isProtected,getVideoComments)
 router.post('/addcomment/:videoId',isProtected,addComment)
 export default router
