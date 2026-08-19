@@ -15,4 +15,16 @@ const commentAddedtoVideo = async(content,videoId,user)=>{
    })
 }
 
-export {findallcommentforvideo,commentAddedtoVideo}
+const findCommentById = async(commentId)=>{
+  return Comment.findById(commentId)
+}
+
+const updatedComment = async(commentId, content)=>{
+    return Comment.findByIdAndUpdate(commentId,{
+        $set:{content}
+    },
+    {returnDocument:'after'}
+)
+}
+
+export {findallcommentforvideo,commentAddedtoVideo,findCommentById,updatedComment}
