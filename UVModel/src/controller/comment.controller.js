@@ -1,4 +1,4 @@
-import { commentAddedtoVideo, findallcommentforvideo, findCommentById, updatedComment } from "../services/comment.js"
+import { commentAddedtoVideo, deletedComment, findallcommentforvideo, findCommentById, updatedComment } from "../services/comment.js"
 import { Apierror } from "../utils/Apierror.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { Asyncerror } from "../utils/Asyncerror.js"
@@ -59,4 +59,22 @@ const updateCommentcontent = Asyncerror(async(req,res)=>{
     )
 })
 
-export {getVideoComments,addComment,updateCommentcontent}
+const deleteCommentcontent = Asyncerror(async(req,res)=>{
+   const {commentId} = req.params 
+   if(!commentId) throw new Apierror(400,'Commentid do not found') 
+    
+   const commentDetails = await findCommentById(commentId) 
+   if(!commentDetails) throw new Apierror(400,'Comment Details not found')
+
+   if(req.user._id.toString()!==commentDetails.owner.toString()){
+        throw new Apierror(400,'Unauthorized to update comment')
+    }
+    const commentdelete =  await deletedComment(commentId)
+    if(!commentdelete) throw new Apierror(400,'Comment not deleted')
+
+    return res.status(200)
+    .json(
+        new Apiresponse(200,{},'Comment delete successfully')
+    )
+})
+export {getVideoComments,addComment,updateCommentcontent,deleteCommentcontent}
