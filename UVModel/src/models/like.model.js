@@ -8,6 +8,10 @@ const likeSchema = new mongoose.Schema({
        type:mongoose.Schema.Types.ObjectId, 
        ref:'Comment'
      },
+     tweet:{
+       type:mongoose.Schema.Types.ObjectId, 
+       ref:'Tweet'
+     },
      owner:{
         type:mongoose.Schema.Types.ObjectId, 
         ref:'User'
