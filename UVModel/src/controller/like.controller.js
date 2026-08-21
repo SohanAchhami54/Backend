@@ -1,4 +1,4 @@
-import { createCommentLike, createVideoLike, deleteExistingCommentLike, deleteExistingVideoLike, findExistingCommentLike, findExistingVideoLike } from "../services/like.js";
+import { createCommentLike, createTweetLike, createVideoLike, deleteExistingCommentLike, deleteExistingTweetLike, deleteExistingVideoLike, findExistingCommentLike, findExistingTweetLike, findExistingVideoLike } from "../services/like.js";
 import { Apierror } from "../utils/Apierror.js";
 import { Apiresponse } from "../utils/Apiresponse.js";
 import { Asyncerror } from "../utils/Asyncerror.js";
@@ -46,10 +46,33 @@ const toggleCommentLike = Asyncerror(async(req,res)=>{
     )
 })
 
+const toggleTweetLike= Asyncerror(async(req,res)=>{
+     const {tweetId} = req.params 
+     if(!tweetId) throw new Apierror(400,'TweetId do not found')
+        
+    const existingTweetLike = await findExistingTweetLike(tweetId,req.user._id) 
+    if(existingTweetLike){
+        await deleteExistingTweetLike(existingTweetLike._id) 
+
+        return res.status(200)
+        .json(
+            new Apiresponse(200,{},'Comment on tweet delete successfully') 
+        )
+    }
+
+    const tweetLike = await createTweetLike(tweetId,req.user._id)
+    if(!tweetLike) throw new Apierror(400,'TweetLike not created') 
+    
+        return res.status(200)
+        .json(
+            new Apiresponse(200,{},'Tweet like created successfully')
+        )
+})
 
 
 export {
     toggleVideoLike,
     toggleCommentLike,
+    toggleTweetLike
 
 }
