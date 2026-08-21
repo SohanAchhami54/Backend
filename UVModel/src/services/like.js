@@ -36,11 +36,32 @@ const createCommentLike = async(commentId,userId)=>{
     })
 }
 
+const findExistingTweetLike= async(tweetId,userId)=>{
+   return Like.findOne({
+      tweet:tweetId, 
+      likedBy:userId
+   })
+}
+
+const deleteExistingTweetLike =async(likeid)=>{
+    return Like.findByIdAndDelete(likeid)
+}
+
+const createTweetLike =async(tweetId,userId)=>{
+    await Like.create({
+        tweet:tweetId, 
+        likedBy:userId
+    })
+}
+
 export {
     findExistingVideoLike,
     deleteExistingVideoLike,
     createVideoLike,
     findExistingCommentLike,
     deleteExistingCommentLike,
-    createCommentLike
+    createCommentLike,
+    findExistingTweetLike,
+    deleteExistingTweetLike,
+    createTweetLike
 }
