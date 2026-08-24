@@ -1,4 +1,4 @@
-import { addTweet, findOldTweet, getallusertweet, updatedTweet } from "../services/tweet.js";
+import { addTweet, deletedTweet, findOldTweet, findTweetDetails, getallusertweet, updatedTweet } from "../services/tweet.js";
 import { Apierror } from "../utils/Apierror.js";
 import { Apiresponse } from "../utils/Apiresponse.js";
 import { Asyncerror } from "../utils/Asyncerror.js";
@@ -53,4 +53,25 @@ const updateTweet = Asyncerror(async(req,res)=>{
     )
 })
 
-export {createTweet,getUserTweets,updateTweet}
+
+const deleteTweet = Asyncerror(async(req,res)=>{
+    const {tweetId} = req.params 
+    if(!tweetId) throw new Apierror(400,'Tweet id do not found') 
+ 
+    const tweetDetails = await findTweetDetails(tweetId) 
+    if(!tweetDetails) throw new Apierror(400,'Tweet details do not found') 
+    
+    if(req.user._id.toString()!==tweetDetails.owner.toString()){
+        throw new Apierror(400,'Unauthorized to delete tweet')
+    }
+    
+    const tweet = await deletedTweet(tweetId)  
+    if(!tweet) throw new Apierror(400,'Tweet do not deleted') 
+    
+    return res.status(200)
+    .json(
+        new Apiresponse(200,{},'Tweet deleted successfully')
+    )
+})
+
+export {createTweet,getUserTweets,updateTweet,deleteTweet}
