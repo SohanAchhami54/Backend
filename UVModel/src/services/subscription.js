@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js"
 const findSubscription=async(channelId,userId)=>{
    return Subscription.findOne({
      channel:channelId,
-     subscription:userId
+      subscriber:userId
    })
 }
 
@@ -13,9 +13,9 @@ const deletedSubscription=async(channelId)=>{
 }
 
 
-const createSubscription=async(subscribe, channel)=>{
+const createSubscription=async(subscriber, channel)=>{
    return await Subscription.create({
-     subscribe, 
+     subscriber, 
      channel
    })
 }
