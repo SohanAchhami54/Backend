@@ -1,16 +1,17 @@
 import { Subscription } from "../models/subscription.model.js"
 import { User } from "../models/user.model.js"
 
-const findChannel=async(username)=>{
-   return User.findOne({username})
+const findSubscription=async(channelId,userId)=>{
+   return Subscription.findOne({
+     channel:channelId,
+     subscription:userId
+   })
 }
 
-const findExistingSubscription=async(subscribe, channel)=>{
-    return Subscription.findOne({
-        subscribe, 
-        channel
-    })
+const deletedSubscription=async(channelId)=>{
+  return Subscription.findByIdAndDelete(channelId)
 }
+
 
 const createSubscription=async(subscribe, channel)=>{
    return await Subscription.create({
@@ -19,4 +20,8 @@ const createSubscription=async(subscribe, channel)=>{
    })
 }
 
-export {findChannel,findExistingSubscription,createSubscription}
+export {
+    findSubscription,
+    deletedSubscription,
+    createSubscription
+}
