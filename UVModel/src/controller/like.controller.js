@@ -1,4 +1,5 @@
-import { createCommentLike, createTweetLike, createVideoLike, deleteExistingCommentLike, deleteExistingTweetLike, deleteExistingVideoLike, findExistingCommentLike, findExistingTweetLike, findExistingVideoLike } from "../services/like.js";
+import {  createCommentLike, createTweetLike, createVideoLike, deleteExistingCommentLike, deleteExistingTweetLike, deleteExistingVideoLike, findExistingCommentLike, findExistingTweetLike, findExistingVideoLike } from "../services/like.js";
+import { allLikeVideo } from "../services/pipeline.js";
 import { Apierror } from "../utils/Apierror.js";
 import { Apiresponse } from "../utils/Apiresponse.js";
 import { Asyncerror } from "../utils/Asyncerror.js";
@@ -69,10 +70,22 @@ const toggleTweetLike= Asyncerror(async(req,res)=>{
         )
 })
 
+const getLikedVideos = Asyncerror(async(req,res)=>{
+     const userId = req.user._id  
+     if(!userId) throw new Apierror(400,'Userid not found') 
+    
+    //  const findLike = await  alllikeVideo(userId)
+     const findLike = await allLikeVideo(userId)
+     if(findLike.length===0) throw new Apierror(400,'Cannot find liked videos by user') 
+     return res.status(200)
+     .json(
+        new Apiresponse(200,findLike,'like video found successfully')
+     )
+})
 
 export {
     toggleVideoLike,
     toggleCommentLike,
-    toggleTweetLike
-
+    toggleTweetLike,
+    getLikedVideos
 }
