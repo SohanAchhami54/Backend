@@ -4,7 +4,8 @@ import cors from 'cors'
 import userRouter from './routes/user.route.js'  
 import videoRouter from './routes/video.route.js'
 import commentRouter from './routes/comment.route.js' 
-import likeRouter from './routes/like.route.js'
+import likeRouter from './routes/like.route.js' 
+import tweetRouter from './routes/tweet.route.js'
 import { errorMiddleware } from './middleware/error.middleware.js'
 const app = express()
 
@@ -24,7 +25,8 @@ app.use(express.static('public'))
 app.use('/api/v1/users', userRouter) 
 app.use('/api/v1/video',videoRouter)
 app.use('/api/v1/comment',commentRouter) 
-app.use('/api/v1/like',likeRouter)
+app.use('/api/v1/like',likeRouter) 
+app.use('/api/v1/tweet',tweetRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello from backend')
