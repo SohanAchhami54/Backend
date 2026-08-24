@@ -2,7 +2,7 @@ import express from 'express'
 import { changePassword, generateNewAccessRefreshToken, getChannelInfo, getCurrentUser, getWatchHistory, updateAccountDetails, updateAvatarImage, updateCoverImage, userLogin, userLogout, userRegister } from '../controller/user.controller.js'
 import { upload } from '../middleware/multer.middleware.js'
 import { isProtected } from '../middleware/auth.middleware.js'
-import { subscribeChannel } from '../controller/subscription.controller.js'
+
 const router=express.Router() 
 
 router.post('/register',upload.fields([
@@ -22,7 +22,7 @@ router.patch('/updatecoverimage',isProtected,upload.single('coverimage'),updateC
 router.get('/c/:username',isProtected,getChannelInfo) 
 router.get('/history',isProtected,getWatchHistory)
 
-router.post('/subscribe',isProtected,subscribeChannel)
+
 
 router.post('/logout',isProtected,userLogout) 
 
