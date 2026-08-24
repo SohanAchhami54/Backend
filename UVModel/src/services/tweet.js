@@ -7,5 +7,9 @@ const addTweet = async(content,owner)=>{
   })
 }
 
+const getallusertweet = async(owner)=>{
+    return Tweet.find({owner})
+}
 
-export {addTweet}
+
+export {addTweet,getallusertweet}
