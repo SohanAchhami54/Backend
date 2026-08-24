@@ -1,6 +1,6 @@
 import express from 'express' 
-import { isProtected } from '../middleware/auth.middleware'
-import { toggleSubscription } from '../controller/subscription.controller'
+import { isProtected } from '../middleware/auth.middleware.js'
+import { toggleSubscription } from '../controller/subscription.controller.js'
 
 const router = express.Router() 
 
