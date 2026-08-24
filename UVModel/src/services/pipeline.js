@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import { User } from "../models/user.model.js"
+import { Like } from "../models/like.model.js"
 
 const userAggregate = async(username,userid)=>{
    const channel = await User.aggregate([
@@ -93,4 +94,30 @@ const watchHistoryAggregate=async(userid)=>{
    return user[0]
 }
 
-export {userAggregate,watchHistoryAggregate}
+
+
+const allLikeVideo= async(userId)=>{
+    const likeVideo= await Like.aggregate([
+        {
+            $match:{
+                likedBy:userId, 
+                video: {$exists:true}
+            }
+        },
+
+        {
+            $lookup:{
+                from:'videos', 
+                localField:'video',
+                foreignField:'_id',
+                as:'video'
+            }
+        },
+        
+    ])
+    return likeVideo
+}
+
+
+
+export {userAggregate,watchHistoryAggregate,allLikeVideo}
