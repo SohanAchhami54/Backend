@@ -23,4 +23,20 @@ const updatedTweet= async(tweetId,content)=>{
 )
 }
 
-export {addTweet,getallusertweet,findOldTweet,updatedTweet}
+
+const findTweetDetails=async(tweetId)=>{
+   return Tweet.findById(tweetId)
+}
+
+const deletedTweet=async(tweetId)=>{
+   return Tweet.findByIdAndDelete(tweetId)
+}
+
+export {
+    addTweet,
+    getallusertweet,
+    findOldTweet,
+    updatedTweet,
+    findTweetDetails,
+    deletedTweet
+}
