@@ -11,5 +11,16 @@ const getallusertweet = async(owner)=>{
     return Tweet.find({owner})
 }
 
+const findOldTweet = async(tweetid)=>{
+  return Tweet.findById(tweetid)
+}
 
-export {addTweet,getallusertweet}
+const updatedTweet= async(tweetId,content)=>{
+  return Tweet.findByIdAndUpdate(tweetId,{
+    $set:{content}
+   },
+   {returnDocument:'after'}
+)
+}
+
+export {addTweet,getallusertweet,findOldTweet,updatedTweet}
