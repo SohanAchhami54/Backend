@@ -25,7 +25,7 @@ const toggleSubscription = Asyncerror(async(req,res)=>{
     
     return res.status(200)
     .json(
-        new Apiresponse(200,createdsubscription,'Subscription successfully created')
+        new Apiresponse(200,createdsubscription,'Channel subscribe successfully')
     )
 
 })
