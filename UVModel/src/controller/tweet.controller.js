@@ -1,4 +1,4 @@
-import { addTweet, getallusertweet } from "../services/tweet.js";
+import { addTweet, findOldTweet, getallusertweet, updatedTweet } from "../services/tweet.js";
 import { Apierror } from "../utils/Apierror.js";
 import { Apiresponse } from "../utils/Apiresponse.js";
 import { Asyncerror } from "../utils/Asyncerror.js";
@@ -30,5 +30,27 @@ const getUserTweets = Asyncerror(async(req,res)=>{
 })
 
 
+const updateTweet = Asyncerror(async(req,res)=>{
+    const {tweetId} = req.params 
+    if(!tweetId) throw new Apierror(400,'Tweet id do not found')
 
-export {createTweet,getUserTweets}
+    const {content} = req.body 
+    if(!content) throw new Apierror(400,'Content do not found') 
+    
+    const oldtweet = await findOldTweet(tweetId) 
+    if(!oldtweet) throw new Apierror(400,'Old tweet not found') 
+    
+    if(req.user._id.toString()!==oldtweet.owner.toString()){
+        throw new Apierror(400,'Unauthorized to update tweet')
+    }
+
+    const updatetweet = await updatedTweet(tweetId,content) 
+    if(!updatetweet) throw new Apierror(400,'Tweet do not updated') 
+    
+    return res.status(200)
+    .json(
+        new Apiresponse(200,updatetweet,'Tweet updated successfully')
+    )
+})
+
+export {createTweet,getUserTweets,updateTweet}
