@@ -115,7 +115,7 @@ const allLikeVideo= async(userId)=>{
         },
         
     ])
-    return likeVideo
+    return likeVideo[0]
 }
 
 
